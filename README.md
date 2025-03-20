@@ -8,43 +8,7 @@ Once the C2 server reaches a baseline acceptable functional level I plan on furt
 Basic File Structure:
 ======================================================================================================================
 
-/C2-Server
-│
-├── /agent                  # Agent-related files and components
-│   ├── agent.py            # Main agent logic (or agent binary)
-│   ├── persistence.py      # Code for persistence mechanisms (e.g., startup)
-│   ├── beacon.py           # Beaconing mechanism (periodic check-in to server)
-│   ├── communications.py   # Handles communication (e.g., HTTP/HTTPS requests)
-│   └── encrypt.py          # Encryption methods for data exchange (optional)
-│
-├── /server                 # C2 server components
-│   ├── server.py           # Main server logic (handles incoming requests)
-│   ├── commands.py         # Command handling (e.g., execute, upload, download)
-│   ├── config.py           # Configuration settings (server address, ports)
-│   ├── db.py               # Database to store agent info, logs, etc.
-│   ├── logs.py             # Logging utility (e.g., track commands, errors)
-│   └── update.py           # Code to update agents dynamically
-│
-├── /tools                  # Additional utility tools (e.g., for obfuscation or packing)
-│   ├── obfuscator.py       # Custom obfuscation or packing script (optional)
-│   └── updater.py          # Script to update C2 server and agents
-│
-├── /network                # Networking and communication-related components
-│   ├── dns_tunneling.py    # DNS tunneling (optional)
-│   ├── proxy.py            # Proxy or VPN setup (optional)
-│   └── dga.py              # Domain Generation Algorithm (optional)
-│
-├── /configs                # Configuration files
-│   ├── server_config.json  # C2 server config (IP, port, protocols)
-│   ├── agent_config.json   # Agent configuration (e.g., beacon interval)
-│   └── encryption_keys.json # Keys or settings for encryption (optional)
-│
-├── /logs                   # Log files for debugging, tracking, etc.
-│   ├── agent_logs.txt      # Logs of agent activity
-│   ├── server_logs.txt     # Logs of server activity
-│   └── error_logs.txt      # Errors and debug logs
-│
-└── /README.md              # Documentation for setup and usage
+C2-Server/ │ ├── agent/ # Agent-related files and components │ ├── agent.py # Main agent logic (or agent binary) │ ├── persistence.py # Persistence mechanisms (e.g., startup) │ ├── beacon.py # Beaconing mechanism (periodic check-in to server) │ ├── communications.py # Handles communication (e.g., HTTP/HTTPS requests) │ └── encrypt.py # Encryption methods for data exchange (optional) │ ├── server/ # C2 server components │ ├── server.py # Main server logic (handles incoming requests) │ ├── commands.py # Command handling (e.g., execute, upload, download) │ ├── config.py # Configuration settings (server address, ports) │ ├── db.py # Database to store agent info, logs, etc. │ ├── logs.py # Logging utility (e.g., track commands, errors) │ └── update.py # Code to update agents dynamically │ ├── tools/ # Additional utility tools (e.g., for obfuscation or packing) │ ├── obfuscator.py # Custom obfuscation or packing script (optional) │ └── updater.py # Script to update C2 server and agents │ ├── network/ # Networking and communication-related components │ ├── dns_tunneling.py # DNS tunneling (optional) │ ├── proxy.py # Proxy or VPN setup (optional) │ └── dga.py # Domain Generation Algorithm (optional) │ ├── configs/ # Configuration files │ ├── server_config.json # C2 server config (IP, port, protocols) │ ├── agent_config.json # Agent configuration (e.g., beacon interval) │ └── encryption_keys.json # Keys or settings for encryption (optional) │ ├── logs/ # Log files for debugging, tracking, etc. │ ├── agent_logs.txt # Logs of agent activity │ ├── server_logs.txt # Logs of server activity │ └── error_logs.txt # Errors and debug logs │ └── README.md # Documentation for setup and usage
 
 
 ======================================================================================================================
