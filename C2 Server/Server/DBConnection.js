@@ -1,5 +1,5 @@
 const mysql = require('mysql');
-const config = require('./ServerConfig.env.json');
+const config = require('../Config/ServerConfig.env.json');
 
 var conn = mysql.createConnection({
     host: config.Database.Host,
@@ -7,9 +7,21 @@ var conn = mysql.createConnection({
     password: config.Database.Password
 });
 
-conn.connect(function(err){
-    if(err) throw err;
-    console.log("Connected...");
-});
 
-conn.end();
+function readActiveConnections(){
+    conn.connect(function(err){
+        if(err) throw err;
+        var sql = "SELECT * FROM malagents.agents WHERE agentStatus = 1";
+        conn.query(sql, function(err, results){
+            if (err) throw err;
+            console.log(results);
+            conn.end();
+        });
+    });
+}
+
+module.exports= {
+    readActiveConnections
+};
+
+
