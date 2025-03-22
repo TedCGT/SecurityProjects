@@ -1,3 +1,4 @@
-Config/ServerConfig.env.json
-Config/certificate.pem
-Config/private.key
+# Ignore SSL certificate files
+C2Server/Config/certificate.pem
+C2Server/Config/private.key
+C2Server/Config/ServerConfig.env.json
