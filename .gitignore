@@ -2,3 +2,4 @@
 C2Server/Config/certificate.pem
 C2Server/Config/private.key
 C2Server/Config/ServerConfig.env.json
+/nodule_modules
