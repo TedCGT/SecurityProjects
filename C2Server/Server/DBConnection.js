@@ -11,20 +11,6 @@ var pool = mysql.createPool({
     queueLimit: 0
 });
 
-//Dupe checks.
-async function checkDuplicateAgent(agentIP, agentMAC){
-    //Check if agent exists. Need to actually add the check.
-    var sql = "SELECT * FROM malagents.agents WHERE agentIP = '" + agentIP + "' OR agentMAC = '" + agentMAC + "'";
-    try{
-        const conn = await pool.promise().getConnection();
-        const [results] = await conn.query(sql);
-        console.log(results);
-        conn.release();
-    } catch (err) {
-        console.error('Error:', err);
-    }
-}
-
 //Baseline functions.
 async function readActiveConnections() {
     try {
@@ -37,16 +23,19 @@ async function readActiveConnections() {
     }
 }
 
+//Inserts new agent connection into the malagents DB. If it catches a duplicate entry, it will catch the error and return false.
 async function establishNewAgent(agentIP, agentMAC) {
     try {
         const conn = await pool.promise().getConnection();
-        await checkDuplicateAgent(agentIP, agentMAC);
         const sql = "INSERT INTO malagents.agents (agentIP, agentStatus, agentMAC) VALUES (?, 1, ?)";
         const [results] = await conn.query(sql, [agentIP, agentMAC]);
         console.log('New agent added:', results);
         conn.release();
+        return true;
     } catch (err) {
-        console.error('Error:', err);
+        if(err.code == 'ER_DUP_ENTRY'){
+            return false;
+        }
     } 
 }
 
